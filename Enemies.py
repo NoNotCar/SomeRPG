@@ -11,12 +11,28 @@ class SlimeBullet(BoxManagers.FallingBullet):
     orect = pygame.Rect(2,6,12,8)
     img=img2("SlimeBullet")
     atk = 3
-class SlimeAttack(BoxManagers.EnemyAttackManager):
+class LeafBullet(BoxManagers.FallingBullet):
+    orect = pygame.Rect(2,4,18,6)
+    img=img2("LeafBullet")
+    atk = 5
+    def update(self,manager):
+        self.x=(self.x+20)%132-21
+        BoxManagers.FallingBullet.update(self,manager)
+class FBulletAttack(BoxManagers.EnemyAttackManager):
+    bchance=20
+    bclass=None
     def eup(self,box,events):
-        if not randint(0,20):
-            self.bullets.append(SlimeBullet(randint(0,96),-16))
+        if not randint(0,self.bchance):
+            self.bullets.append(self.bclass(randint(0,96),-self.bclass.img.get_height()))
+class SlimeAttack(FBulletAttack):
+    bclass=SlimeBullet
+class LeafAttack(FBulletAttack):
+    bclass = LeafBullet
+
 class SlimeSpray(Moves.EnemyAttack):
     eam=SlimeAttack
+class LeafStorm(Moves.EnemyAttack):
+    eam = LeafAttack
 
 class Enemy(object):
     mhp=1
@@ -35,7 +51,7 @@ class Enemy(object):
         return False
     def allow_leave(self,battle):
         return False
-    def act(self,n):
+    def act(self,n,battle):
         pass
     def damage(self,dam):
         self.hp-=dam
@@ -61,7 +77,7 @@ class RSlime(Enemy):
     himg=img2("RedSlimeH")
     moves = [Jiggle(),SlimeSpray(),SlimeSpray()]
     desc = "A small slime. It doesn't look too dangerous, just quite hungry."
-    mhp=10
+    mhp=15
     hap = -3
     def likes_food(self,foodname):
         return True
@@ -69,6 +85,24 @@ class RSlime(Enemy):
         return self.himg if self.hap>0 else self.img
     def allow_leave(self,battle):
         return False
+class BadFlower(Enemy):
+    name="???"
+    img=img2("BadFlower")
+    moves = [LeafStorm()]
+    desc = "A very angry flower."
+    mhp=20
+    hap = -3
+    actextras = ["Taunt","Flirt","Hug"]
+    def likes_food(self,foodname):
+        return False
+    def act(self,n,battle):
+        if n!=3:
+            battle.add_info(self.name.capitalize()+" makes a very rude gesture with its leaves")
+        else:
+            battle.add_info(self.name.capitalize()+" is conforted!")
+            self.hap+=1
+    def allow_leave(self,battle):
+        return randint(0,1)
 class OverworldEnemy(Object):
     encountered=False
     def __init__(self,x,y,enemy):

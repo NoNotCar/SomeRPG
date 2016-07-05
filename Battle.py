@@ -16,6 +16,9 @@ class Battle(object):
         self.p=player
         self.infos=[]
         self.add_info(foe.name.upper()+" appears!")
+        if foe.name=="???":
+            self.restype="Name"
+            self.add_resbox(Text.EntryBox("Choose your foe's name!"))
         self.a=arch
     def update(self,events):
         if not self.infos:
@@ -49,7 +52,7 @@ class Battle(object):
                             self.add_info(self.f.name.capitalize()+" wants to keep fighting!")
                 elif self.restype=="Act":
                     if self.resultbox.n:
-                        self.f.act(self.resultbox.n)
+                        self.f.act(self.resultbox.n,self)
                     else:
                         self.add_info(self.f.desc)
                 elif self.restype=="Fight":
@@ -58,7 +61,9 @@ class Battle(object):
                         self.add_info(self.f.name.capitalize()+" died!")
                         self.end="won"
                         override=True
-
+                elif self.restype=="Name":
+                    self.f.__class__.name=self.resultbox.ebox.value.lower()
+                    override=True
                 self.resultbox=None
                 self.restype=None
                 if override:

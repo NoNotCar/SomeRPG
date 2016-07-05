@@ -1,6 +1,7 @@
-import Tiles, Player, Plants,Buildings, Crops, Text, Battle, Enemies, Img
+import Tiles, Player, Plants,Buildings, Crops, Text, Battle, Enemies, Img, pygame
 from random import randint, choice
 EDITOROBJS=[Plants.Tree,Plants.Flowers]
+encounter=Img.sndget("encounter")
 class World(object):
     entrances=[]
     ranencounters=[]
@@ -86,6 +87,8 @@ class World(object):
     def add_info(self,info):
         self.infos.append(Text.Ibox(info))
     def encounter(self,enemy):
+        encounter.play()
+        pygame.time.wait(500)
         self.arch.encounter(enemy)
     def use_item(self,n):
         self.p.items[n].use(self)

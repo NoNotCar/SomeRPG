@@ -1,5 +1,6 @@
 import Img
 import pygame
+import eztext
 infobox=Img.img2("InfoBox")
 multibox=Img.img2("MultiBox")
 wabox=Img.img2("AtkBoxWide")
@@ -14,6 +15,22 @@ class Ibox(Tbox):
     def __init__(self,info):
         self.img=infobox.copy()
         Img.drawTextRect(self.img," "*3+info,(64,64,64),pygame.Rect(10,10,492,108),Img.dfont)
+class EntryBox(Tbox):
+    interactive = True
+    done=False
+    def __init__(self,prompt):
+        self.img=infobox.copy()
+        Img.drawTextRect(self.img," "*3+prompt,(64,64,64),pygame.Rect(10,10,492,108),Img.dfont)
+        self.ebox=eztext.Input(x=8,y=32,font=Img.dfont,color=(255,255,255))
+    def update(self,events):
+        self.ebox.update(events)
+        for e in events:
+            if e.type==pygame.KEYDOWN and e.key==pygame.K_RETURN and self.ebox.value!="":
+                self.done=True
+    def render(self,screen,iloc):
+        img=self.img.copy()
+        self.ebox.draw(img)
+        screen.blit(img,iloc)
 class MultiBox(Tbox):
     interactive = True
     done=False
