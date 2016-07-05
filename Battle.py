@@ -1,6 +1,7 @@
 import Text, Img
 import pygame
 from random import choice
+import sys
 pback=Img.img2("BattleBack")
 bactions=Img.img2("BattleBar")
 class Battle(object):
@@ -19,10 +20,18 @@ class Battle(object):
     def update(self,events):
         if not self.infos:
             if self.end:
+                if self.end=="DEAD":
+                    sys.exit()
                 self.a.endbattle()
+            if self.p.hp<=0:
+                self.p.hp=0
+                self.add_info("You died...")
+                self.end="DEAD"
             if self.turn==0:
                 self.turn=1
-                self.add_info(choice(self.f.moves).use(self.f,self.p,self))
+                chuse=choice(self.f.moves).use(self.f,self.p,self)
+                if chuse:
+                    self.add_info(chuse)
             if self.resultbox:
                 override=False
                 if self.restype=="Mercy":
@@ -33,7 +42,7 @@ class Battle(object):
                         else:
                             self.add_info("Can't escape!")
                     else:
-                        if self.f.hap:
+                        if self.f.hap>0:
                             self.add_info("YOU WON!")
                             self.end="won"
                         else:

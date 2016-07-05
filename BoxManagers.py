@@ -1,12 +1,100 @@
 import pygame
+import Img
+import Direction as D
+ehit=Img.sndget("enemyhit")
+phit=Img.sndget("hit")
+pimgs=Img.imgstrip("Man")
 class AttackManager(object):
     def update(self,box,events):
         pass
     def render(self,sub):
         pass
     def end(self,box,damage):
+        box.damage=damage if damage>0 else 0
+        box.done=True
+        if damage>0:
+            ehit.play()
+class EnemyAttackManager(AttackManager):
+    px=48
+    py=48
+    pd=2
+    pspd=2
+    prect=pygame.Rect(5,1,6,14)
+    mi=0
+    def __init__(self,p,secs):
+        self.p=p
+        self.bullets=[]
+        self.t=secs*60
+    def update(self,box,events):
+        keys=pygame.key.get_pressed()
+        for n,k in enumerate(D.kconv):
+            if keys[k]:
+                d=D.get_dir(n)
+                self.px+=d[0]*self.pspd
+                self.py+=d[1]*self.pspd
+                self.pd=n
+                break
+        if 0>self.px:
+            self.px=0
+        elif 96<self.px:
+            self.px=96
+        if 0>self.py:
+            self.py=0
+        elif 96<self.py:
+            self.py=96
+        for b in self.bullets[:]:
+            b.update(self)
+        if self.mi:
+            self.mi-=1
+        else:
+            collision=self.prect.move(self.px,self.py).collidelist([b.rect for b in self.bullets])
+            if collision!=-1:
+                self.p.hp-=self.bullets[collision].atk
+                phit.play()
+                if self.p.hp<=0:
+                    box.done=True
+                else:
+                    self.mi=self.bullets[collision].mi
+        self.eup(box,events)
+        if self.t:
+            self.t-=1
+        else:
+            box.done=True
+    def eup(self,box,events):
+        pass
+    def render(self,sub):
+        self.prerender(sub)
+        if not self.mi or (self.t//2)%2:
+            sub.blit(pimgs[self.pd],(self.px,self.py))
+        for b in self.bullets:
+            sub.blit(b.img,(b.x,b.y))
+    def prerender(self,sub):
+        pass
+    def postrender(self,sub):
+        pass
+    def end(self,box,damage):
         box.damage=damage
         box.done=True
+class Bullet(object):
+    img=None
+    orect=pygame.Rect(0,0,0,0)
+    atk=1
+    mi=60
+    def __init__(self,x,y):
+        self.x=x
+        self.y=y
+        self.set_rect()
+    def update(self,manager):
+        pass
+    def set_rect(self):
+        self.rect=self.orect.move(self.x,self.y)
+class FallingBullet(Bullet):
+    fspeed=1
+    def update(self,manager):
+        self.y+=self.fspeed
+        if self.y>112:
+            manager.bullets.remove(self)
+        self.set_rect()
 class SlashAttack(AttackManager):
     sx=0
     dsx=8

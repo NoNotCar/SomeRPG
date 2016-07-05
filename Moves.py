@@ -1,11 +1,11 @@
+import Text
 class Move(object):
     def use(self,user,target,battle):
         return "..."
 
-class Attack(Move):
-    astr=1
+class EnemyAttack(Move):
+    eam=None
+    time=10
     def use(self,user,target,battle):
-        if target.hp>=self.astr:
-            target.hp-=self.astr
-        else:
-            target.hp=0
+        battle.add_obox(Text.EAttackBox(self.eam(target,self.time)))
+

@@ -3,6 +3,7 @@ import pygame
 infobox=Img.img2("InfoBox")
 multibox=Img.img2("MultiBox")
 wabox=Img.img2("AtkBoxWide")
+sabox=Img.img2("AtkBoxSquare")
 cursor=Img.img2("Selector")
 class Tbox(object):
     img=None
@@ -39,6 +40,19 @@ class AttackBox(Tbox):
         self.img=wabox.copy()
         self.am=weapon.am()
         self.sub=self.img.subsurface(pygame.Rect(8,8,496,112))
+    def update(self,events):
+        self.am.update(self,events)
+    def render(self,screen,iloc):
+        self.sub.fill((0,0,0))
+        self.am.render(self.sub)
+        screen.blit(self.img,iloc)
+class EAttackBox(Tbox):
+    interactive = True
+    done=False
+    def __init__(self,eam):
+        self.img=sabox.copy()
+        self.am=eam
+        self.sub=self.img.subsurface(pygame.Rect(200,8,112,112))
     def update(self,events):
         self.am.update(self,events)
     def render(self,screen,iloc):

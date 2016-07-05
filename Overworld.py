@@ -1,7 +1,9 @@
 import Tiles, Player, Plants,Buildings, Crops, Text, Battle, Enemies, Img
+from random import randint, choice
 EDITOROBJS=[Plants.Tree,Plants.Flowers]
 class World(object):
     entrances=[]
+    ranencounters=[]
     def __init__(self,arch):
         self.arch=arch
         savfile=open(Img.np("areas/%s.sav" % self.save))
@@ -29,12 +31,16 @@ class World(object):
                 self.o[x][y]=[]
         self.infos=[]
     def update(self,events):
+        cencounter=self.p.moving and self.ranencounters
         if not self.infos:
             for row in self.o:
                 for os in row:
                     for o in os:
                         o.update(self,events)
                         o.mupdate(self)
+        if cencounter and not self.p.moving and not randint(0,10):
+            self.encounter(choice(self.ranencounters)())
+
     def render(self,screen):
         ply=self.p
         asx=ply.x*32+int(round(ply.xoff))-240

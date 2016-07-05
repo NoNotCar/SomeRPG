@@ -28,6 +28,13 @@ def imgstrip2(fil):
     for n in range(img.get_width() // h):
         imgs.append(pygame.transform.scale(img.subsurface(pygame.Rect(n * h, 0, h, h)), (h*2, h*2)).convert_alpha())
     return imgs
+def imgstrip(fil):
+    img = pygame.image.load(np(loc + fil + ".png"))
+    imgs = []
+    h=img.get_height()
+    for n in range(img.get_width() // h):
+        imgs.append(img.subsurface(pygame.Rect(n * h, 0, h, h)).convert_alpha())
+    return imgs
 def imgstrip2f(fil,w):
     img = pygame.image.load(np(loc + fil + ".png"))
     imgs = []
