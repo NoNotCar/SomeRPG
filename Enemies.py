@@ -78,7 +78,7 @@ class RSlime(Enemy):
     moves = [Jiggle(),SlimeSpray(),SlimeSpray()]
     desc = "A small slime. It doesn't look too dangerous, just quite hungry."
     mhp=15
-    hap = -3
+    hap = -1
     def likes_food(self,foodname):
         return True
     def get_img(self,battle):
@@ -91,7 +91,7 @@ class BadFlower(Enemy):
     moves = [LeafStorm()]
     desc = "A very angry flower."
     mhp=20
-    hap = -3
+    hap = 0
     actextras = ["Taunt","Flirt","Hug"]
     def likes_food(self,foodname):
         return False

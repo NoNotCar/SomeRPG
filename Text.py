@@ -34,10 +34,10 @@ class EntryBox(Tbox):
 class MultiBox(Tbox):
     interactive = True
     done=False
-    def __init__(self,texts):
+    def __init__(self,texts,cols=None):
         self.img=multibox.copy()
         for n,t in enumerate(texts):
-            Img.bcentrerect(Img.dfont,t,self.img,pygame.Rect(254 if n%2 else 4,38*(n//2)+4,254,42),(64,64,64))
+            Img.bcentrerect(Img.dfont,t,self.img,pygame.Rect(254 if n%2 else 4,38*(n//2)+4,254,42),cols[n] if cols else (64,64,64))
         self.maxn=len(texts)
         self.n=0
     def update(self,events):

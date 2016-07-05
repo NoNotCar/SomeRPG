@@ -3,6 +3,7 @@ def timg2(fil):
     return img2("Tiles/"+fil)
 class Tile(object):
     img=None
+    passable=True
     def get_img(self):
         return self.img
 class Grass(Tile):
@@ -12,6 +13,7 @@ class Field(Tile):
 class Sand(Tile):
     img = timg2("Sand")
 class Water(Tile):
+    passable = False
     img = timg2("Wasser")
 tiles=[Grass,Field,Sand,Water]
 tiles=[t() for t in tiles]

@@ -31,6 +31,7 @@ class World(object):
             for y in range(self.size[1]):
                 self.o[x][y]=[]
         self.infos=[]
+        self.nextencounter=randint(10,20)
     def update(self,events):
         cencounter=self.p.moving and self.ranencounters
         if not self.infos:
@@ -39,8 +40,12 @@ class World(object):
                     for o in os:
                         o.update(self,events)
                         o.mupdate(self)
-        if cencounter and not self.p.moving and not randint(0,10):
-            self.encounter(choice(self.ranencounters)())
+        if cencounter and not self.p.moving:
+            if self.nextencounter:
+                self.nextencounter-=1
+            else:
+                self.nextencounter=randint(10,20)
+                self.encounter(choice(self.ranencounters)())
 
     def render(self,screen):
         ply=self.p
@@ -67,10 +72,12 @@ class World(object):
     def in_world(self,x,y):
         return 0<=x<self.size[0] and 0<=y<self.size[1]
     def is_clear(self,x,y):
+        if not self.in_world(x,y):
+            return False
         for o in self.get_os(x,y):
             if o.solid:
                 return False
-        return self.in_world(x,y)
+        return Tiles.tiles[self.t[x][y]].passable
     def dest(self,o):
         self.o[o.x][o.y].remove(o)
     def move(self,o,tx,ty):

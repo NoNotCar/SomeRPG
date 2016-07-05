@@ -4,6 +4,7 @@ from random import choice
 import sys
 pback=Img.img2("BattleBack")
 bactions=Img.img2("BattleBar")
+pactions=Img.img2("BattleBarP")
 class Battle(object):
     turn=1
     end=False
@@ -77,7 +78,7 @@ class Battle(object):
         pygame.draw.rect(screen,(255,0,0),pygame.Rect(256,128+fimg.get_height(),64,8))
         if self.f.hp:
             pygame.draw.rect(screen,(0,255,0),pygame.Rect(256,128+fimg.get_height(),self.f.hp*64//self.f.mhp,8))
-        screen.blit(bactions,(0,480))
+        screen.blit(pactions if self.f.hap>0 else bactions,(0,480))
     def add_info(self,info):
         self.infos.append(Text.Ibox(info))
     def add_obox(self,box):
@@ -106,7 +107,7 @@ class Battle(object):
         elif n==1:
             pass
         elif n==2:
-            self.resultbox=Text.MultiBox(["Spare","Flee"])
+            self.resultbox=Text.MultiBox(["Spare","Flee"],[(255,255,0),(64,64,64)] if self.f.hap>0 else None)
             self.restype="Mercy"
             self.add_obox(self.resultbox)
 
