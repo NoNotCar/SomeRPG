@@ -1,0 +1,17 @@
+from Img import img2
+def timg2(fil):
+    return img2("Tiles/"+fil)
+class Tile(object):
+    img=None
+    def get_img(self):
+        return self.img
+class Grass(Tile):
+    img=timg2("Grass")
+class Field(Tile):
+    img = timg2("Farmland")
+class Sand(Tile):
+    img = timg2("Sand")
+class Water(Tile):
+    img = timg2("Wasser")
+tiles=[Grass,Field,Sand,Water]
+tiles=[t() for t in tiles]
