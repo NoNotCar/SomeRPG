@@ -18,6 +18,18 @@ class LeafBullet(BoxManagers.FallingBullet):
     def update(self,manager):
         self.x=(self.x+20)%132-21
         BoxManagers.FallingBullet.update(self,manager)
+class BirdBeak(BoxManagers.Bullet):
+    orects = [pygame.Rect(0,2,104,12),pygame.Rect(0,8,112,4)]
+    atk=6
+    dx=2
+    img=img2("LongBeak")
+    def update(self,manager):
+        self.x+=self.dx
+        if self.x==0:
+            self.dx=-4
+        elif self.x==-112:
+            manager.bullets.remove(self)
+        self.set_rect()
 class FBulletAttack(BoxManagers.EnemyAttackManager):
     bchance=20
     bclass=None
@@ -28,11 +40,17 @@ class SlimeAttack(FBulletAttack):
     bclass=SlimeBullet
 class LeafAttack(FBulletAttack):
     bclass = LeafBullet
+class BeakAttack(BoxManagers.EnemyAttackManager):
+    def eup(self,box,events):
+        if not self.bullets:
+            self.bullets.append(BirdBeak(-112,randint(0,96)))
 
 class SlimeSpray(Moves.EnemyAttack):
     eam=SlimeAttack
 class LeafStorm(Moves.EnemyAttack):
     eam = LeafAttack
+class BeakPoke(Moves.EnemyAttack):
+    eam = BeakAttack
 
 class Enemy(object):
     mhp=1
@@ -103,6 +121,18 @@ class BadFlower(Enemy):
             self.hap+=1
     def allow_leave(self,battle):
         return randint(0,1)
+class BirdBrain(Enemy):
+    name="???"
+    img=img2("BirdBrain")
+    moves = [BeakPoke()]
+    desc = "Some kind of bird. It's pecking at the ground."
+    mhp=8
+    hap = 0
+    def likes_food(self,foodname):
+        if foodname=="wheat":
+            return True
+    def allow_leave(self,battle):
+        return False
 class OverworldEnemy(Object):
     encountered=False
     def __init__(self,x,y,enemy):

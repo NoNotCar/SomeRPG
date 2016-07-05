@@ -47,14 +47,16 @@ class EnemyAttackManager(AttackManager):
         if self.mi:
             self.mi-=1
         else:
-            collision=self.prect.move(self.px,self.py).collidelist([b.rect for b in self.bullets])
-            if collision!=-1:
-                self.p.hp-=self.bullets[collision].atk
-                phit.play()
-                if self.p.hp<=0:
-                    box.done=True
-                else:
-                    self.mi=self.bullets[collision].mi
+            prect=self.prect.move(self.px,self.py)
+            for b in self.bullets:
+                if prect.collidelist(b.rects)!=-1:
+                    self.p.hp-=b.atk
+                    phit.play()
+                    if self.p.hp<=0:
+                        box.done=True
+                    else:
+                        self.mi=b.mi
+                    break
         self.eup(box,events)
         if self.t:
             self.t-=1
@@ -80,6 +82,7 @@ class Bullet(object):
     orect=pygame.Rect(0,0,0,0)
     atk=1
     mi=60
+    orects=None
     def __init__(self,x,y):
         self.x=x
         self.y=y
@@ -87,7 +90,10 @@ class Bullet(object):
     def update(self,manager):
         pass
     def set_rect(self):
-        self.rect=self.orect.move(self.x,self.y)
+        if self.orects:
+            self.rects=[ore.move(self.x,self.y) for ore in self.orects]
+        else:
+            self.rects=[self.orect.move(self.x,self.y)]
 class FallingBullet(Bullet):
     fspeed=1
     def update(self,manager):
