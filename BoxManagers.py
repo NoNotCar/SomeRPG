@@ -1,6 +1,8 @@
 import pygame
 import Img
 import Direction as D
+from random import randint
+from math import radians,sin,cos
 ehit=Img.sndget("enemyhit")
 phit=Img.sndget("hit")
 pimgs=Img.imgstrip("Man")
@@ -94,6 +96,22 @@ class Bullet(object):
             self.rects=[ore.move(self.x,self.y) for ore in self.orects]
         else:
             self.rects=[self.orect.move(self.x,self.y)]
+class AngBullet(Bullet):
+    img=Img.img2("Bullets/Mini")
+    orect = pygame.Rect(2,2,4,4)
+    atk=3
+    def __init__(self,x,y,ang,vel):
+        Bullet.__init__(self,x,y)
+        self.a=radians(ang)
+        self.v=vel
+        self.ax=float(self.x)
+        self.ay=float(self.y)
+    def update(self,manager):
+        self.ax+=self.v*cos(self.a)
+        self.ay+=self.v*sin(self.a)
+        self.x=int(round(self.ax))
+        self.y=int(round(self.ay))
+        self.set_rect()
 class FallingBullet(Bullet):
     fspeed=1
     def update(self,manager):
@@ -119,3 +137,21 @@ class SlashAttack(AttackManager):
         pygame.draw.rect(sub,(255,255,0),pygame.Rect(216,0,64,112))
         pygame.draw.rect(sub,(255,0,0),pygame.Rect(232,0,32,112))
         pygame.draw.rect(sub,(255,255,255),pygame.Rect(self.sx,0,2,112))
+class PistolAttack(AttackManager):
+    tsshot=0
+    def __init__(self):
+        self.ttgo=randint(60,120)
+    def update(self,box,events):
+        if self.ttgo:
+            self.ttgo-=1
+        else:
+            self.tsshot+=1
+        for e in events:
+            if e.type==pygame.MOUSEBUTTONDOWN and e.button==1:
+                if self.ttgo:
+                    self.end(box,0)
+                else:
+                    self.end(box,10-self.tsshot//5)
+    def render(self,sub):
+        if not self.ttgo:
+            sub.fill((255,0,0))

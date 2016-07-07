@@ -10,12 +10,13 @@ class Battle(object):
     end=False
     resultbox=None
     restype=None
-    def __init__(self,foe,player,arch):
+    def __init__(self,foe,player,arch,backcolour=(0,0,0),bad=False):
         pygame.mixer_music.stop()
-        Img.musplay("Battle 1")
+        Img.musplay("GlitchBattle" if bad else "Battle 1")
         self.f=foe
         self.p=player
         self.infos=[]
+        self.backcolour=backcolour
         self.add_info(foe.name.upper()+" appears!")
         if foe.name=="???":
             self.restype="Name"
@@ -60,6 +61,11 @@ class Battle(object):
                     self.f.damage(self.resultbox.damage)
                     if self.f.hp==0:
                         self.add_info(self.f.name.capitalize()+" died!")
+                        if self.f.loot:
+                            if self.p.add_item(self.f.loot()):
+                                self.add_info("You got a "+self.f.loot.name)
+                            else:
+                                self.add_info("Your inventory is too full to pick up any loot!")
                         self.end="won"
                         override=True
                 elif self.restype=="Name":
@@ -95,7 +101,10 @@ class Battle(object):
                 self.add_info(self.f.name.capitalize()+" likes your "+i.name)
                 self.p.sub_item(i)
         elif i.utype=="weapon":
-            self.add_info("You %s the %s with your %s" % (i.action,self.f.name,i.name))
+            if self.f.singular:
+                self.add_info("You %s %s with your %s" % (i.action,self.f.name,i.name))
+            else:
+                self.add_info("You %s the %s with your %s" % (i.action,self.f.name,i.name))
             self.restype="Fight"
             self.add_resbox(Text.AttackBox(i))
             self.turn=1

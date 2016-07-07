@@ -4,6 +4,7 @@ class Item(object):
     maxstack=10
     utype="normal"
     img=blank32
+    desc="Some kind of item"
     def __init__(self,n=1):
         self.n=n
     def get_img(self):

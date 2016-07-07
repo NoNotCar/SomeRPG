@@ -15,5 +15,7 @@ class Sand(Tile):
 class Water(Tile):
     passable = False
     img = timg2("Wasser")
-tiles=[Grass,Field,Sand,Water]
+class HFloor(Tile):
+    img = img2("HouseFloor")
+tiles=[Grass,Field,Sand,Water,HFloor]
 tiles=[t() for t in tiles]

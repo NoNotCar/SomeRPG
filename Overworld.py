@@ -1,10 +1,12 @@
 import Tiles, Player, Plants,Buildings, Crops, Text, Battle, Enemies, Img, pygame
 from random import randint, choice
+import Direction as D
 EDITOROBJS=[Plants.Tree,Plants.Flowers]
 encounter=Img.sndget("encounter")
 class World(object):
     entrances=[]
     ranencounters=[]
+    backcolour=(0,127,14)
     def __init__(self,arch):
         self.arch=arch
         savfile=open(Img.np("areas/%s.sav" % self.save))
@@ -67,6 +69,9 @@ class World(object):
                     objs=self.o[x][y]
                     for o in objs:
                         screen.blit(o.get_img(self),(x*32+o.xoff-asx,y*32+o.yoff-asy-o.o3d*2))
+        self.erender(screen,asx,asy)
+    def erender(self,screen,asx,asy):
+        pass
     def spawn(self,o):
         self.o[o.x][o.y].append(o)
     def in_world(self,x,y):
@@ -93,10 +98,12 @@ class World(object):
             return os[0]
     def add_info(self,info):
         self.infos.append(Text.Ibox(info))
-    def encounter(self,enemy):
+    def add_talk(self,talk,talker):
+        self.infos.append(Text.TalkBox(talk,talker.tfont,talker.img))
+    def encounter(self,enemy,bad=False):
         encounter.play()
         pygame.time.wait(500)
-        self.arch.encounter(enemy)
+        self.arch.encounter(enemy,bad)
     def use_item(self,n):
         self.p.items[n].use(self)
     def get_exit(self):
@@ -111,6 +118,8 @@ class World(object):
                 w.p=self.p
     def enter(self,entrance):
         return (0,0)
+    def get_p_look(self):
+        return D.offset(self.p.d,self.p)
 class Home(World):
     entrances=["HOME"]
     def __init__(self,arch):

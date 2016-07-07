@@ -5,7 +5,6 @@ import os
 np = os.path.normpath
 loc = os.getcwd() + "/Assets/"
 pygame.mixer.init()
-dfont=pygame.font.Font(np(loc+"PressStart2P.ttf"),16)
 
 def img(fil):
     return pygame.image.load(np(loc + fil + ".png")).convert_alpha()
@@ -88,6 +87,9 @@ def gradback(t,b):
 def x2(img):
     return pygame.transform.scale(img,(img.get_width()*2,img.get_height()*2))
 
+def fload(fil):
+    return pygame.font.Font(np(loc+"fonts/"+fil+".ttf"),16)
+
 # draw some text into an area of a surface
 # automatically wraps words
 # returns any text that didn't get blitted
@@ -130,3 +132,5 @@ def drawTextRect(surface, text, color, rect, font, aa=False, bkg=None):
     return text
 
 blank32=img2("Trans")
+
+dfont=fload("PressStart2P")

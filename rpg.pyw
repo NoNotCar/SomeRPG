@@ -20,10 +20,25 @@ while True:
             events.remove(event)
         elif event.type==pygame.MOUSEBUTTONDOWN and not w.infos:
             mx,my=pygame.mouse.get_pos()
+            kmods=pygame.key.get_mods()
             if event.button==1:
                 for n,rect in enumerate(itemrects):
                     if rect.collidepoint(mx,my) and w.p.items[n]:
-                        w.use_item(n)
+                        if kmods&pygame.KMOD_LCTRL:
+                            slot1=w.p.items[0]
+                            if n:
+                                slot1=w.p.items[0]
+                                w.p.items[0]=w.p.items[n]
+                                w.p.items[n]=slot1
+                                w.add_info("You equip the "+w.p.items[0].name)
+                            elif w.p.items[1]:
+                                slot1=w.p.items[0]
+                                w.p.items[0]=w.p.items[1]
+                                w.p.items[1]=slot1
+                                w.add_info("You equip the "+w.p.items[0].name)
+                            w.turn()
+                        else:
+                            w.use_item(n)
                         break
                 else:
                     if w.battling:
@@ -31,7 +46,11 @@ while True:
                             if rect.collidepoint(mx,my):
                                 w.battle_action(n)
                                 break
-    screen.fill((0,127,14))
+            elif event.button==3:
+                for n,rect in enumerate(itemrects):
+                    if rect.collidepoint(mx,my) and w.p.items[n]:
+                        w.add_info(w.p.items[n].desc)
+    screen.fill(w.wstack[-1].backcolour)
     w.update(events)
     w.render(screen)
     screen.blit(toolbar,(0,0))

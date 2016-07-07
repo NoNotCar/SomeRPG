@@ -63,4 +63,10 @@ class Player(Object):
         if not world.in_world(tx,ty):
             world.get_exit()
             return True
+        else:
+            for o in world.get_os(tx,ty):
+                if o.enter(world,(dx,dy)):
+                    return True
         return Object.move(self,dx,dy,world)
+    def inv_full(self):
+        return all(i for i in self.items)

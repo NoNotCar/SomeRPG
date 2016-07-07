@@ -8,6 +8,8 @@ class Object(object):
     solid=True
     info="Nothing to see here"
     symb="O"
+    tfont=None
+    name="Object"
     def __init__(self,x,y):
         self.place(x,y)
     def place(self,x,y):
@@ -44,9 +46,15 @@ class Object(object):
         pass
     def get_info(self,world):
         return self.info
+    def enter(self,world,d):
+        return False
+    def offenter(self,mp,world,d):
+        pass
 class MultiPart(Object):
     def __init__(self,x,y,p):
         self.parent=p
         self.place(x,y)
     def get_info(self,world):
         return self.parent.get_info(world)
+    def enter(self,world,d):
+        return self.parent.offenter(self,world,d)

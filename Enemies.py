@@ -1,12 +1,21 @@
-from Img import img2
+from Img import img2, fload
 from Object import Object
 import Moves
 import pygame
 from random import randint
 import BoxManagers
+import Weapon
 class Jiggle(Moves.Move):
     def use(self,user,target,battle):
         return user.name.capitalize()+(" wobbles happily!" if user.hap>0 else " jiggles angrily!")
+class Spare(Moves.Move):
+    def use(self,user,target,battle):
+        return user.name.capitalize()+" is sparing you."
+class NullMove(Moves.Move):
+    def __init__(self,msg):
+        self.m=msg
+    def use(self,user,target,battle):
+        return user.name.capitalize()+self.m
 class SlimeBullet(BoxManagers.FallingBullet):
     orect = pygame.Rect(2,6,12,8)
     img=img2("SlimeBullet")
@@ -18,6 +27,21 @@ class LeafBullet(BoxManagers.FallingBullet):
     def update(self,manager):
         self.x=(self.x+20)%132-21
         BoxManagers.FallingBullet.update(self,manager)
+class SunSpawner(BoxManagers.Bullet):
+    orect = pygame.Rect(10,10,12,12)
+    img=img2("Bullets/Sun")
+    atk = 100
+    t=0
+    def update(self,manager):
+        if self.y:
+            self.y+=1
+        if self.t<60:
+            self.t+=1
+        else:
+            self.t=0
+            offset=randint(0,60)
+            for x in range(6):
+                manager.bullets.append(BoxManagers.AngBullet(self.x+12,self.y+12,x*60+offset,2))
 class BirdBeak(BoxManagers.Bullet):
     orects = [pygame.Rect(0,2,104,12),pygame.Rect(0,8,112,4)]
     atk=6
@@ -44,6 +68,12 @@ class BeakAttack(BoxManagers.EnemyAttackManager):
     def eup(self,box,events):
         if not self.bullets:
             self.bullets.append(BirdBeak(-112,randint(0,96)))
+class SunAttack(BoxManagers.EnemyAttackManager):
+    spawned=False
+    def eup(self,box,events):
+        if not self.spawned:
+            self.spawned=True
+            self.bullets.append(SunSpawner(randint(0,80),-32))
 
 class SlimeSpray(Moves.EnemyAttack):
     eam=SlimeAttack
@@ -51,6 +81,8 @@ class LeafStorm(Moves.EnemyAttack):
     eam = LeafAttack
 class BeakPoke(Moves.EnemyAttack):
     eam = BeakAttack
+class SunSpray(Moves.EnemyAttack):
+    eam = SunAttack
 
 class Enemy(object):
     mhp=1
@@ -60,7 +92,9 @@ class Enemy(object):
     hap=0
     moves=[]
     actextras=[]
+    loot=None
     desc="A horrid creature"
+    singular=False
     def __init__(self):
         self.hp=self.mhp
     def get_img(self,battle):
@@ -101,8 +135,17 @@ class RSlime(Enemy):
         return True
     def get_img(self,battle):
         return self.himg if self.hap>0 else self.img
-    def allow_leave(self,battle):
-        return False
+class CoolSlime(Enemy):
+    name="cool slime"
+    img=img2("CoolSlime")
+    moves = [NullMove(" is chillin'."),SlimeSpray(),SunSpray()]
+    desc = "A RAD COOL slime."
+    mhp=15
+    hap = 0
+    actextras = ["Chill"]
+    def act(self,n,battle):
+        battle.add_info("You chill with the cool slime. You feel relaxed")
+        self.hap=1
 class BadFlower(Enemy):
     name="???"
     img=img2("BadFlower")
@@ -133,8 +176,41 @@ class BirdBrain(Enemy):
             return True
     def allow_leave(self,battle):
         return False
-class OverworldEnemy(Object):
+class Dad(Enemy):
+    name="Dad"
+    owimg = img2("Dad")
+    img=img2("DadBattle")
+    moves=[Spare()]
+    desc = "It's your father."
+    mhp = 20
+    hap=1
+    singular = True
+    loot = Weapon.Pistol
+class OverworldNPC(Object):
     encountered=False
+    name="NPC"
+    deathtext=None
+    o3d=4
+    def __init__(self,x,y,enemy=None):
+        self.place(x,y)
+        if not self.e:
+            self.e=enemy
+        self.img=self.e.owimg
+        self.info=self.e.desc
+    def update(self,world,events):
+        if self.e.hp==0:
+            if self.deathtext:
+                world.add_info(self.deathtext)
+            world.dest(self)
+class DadNPC(OverworldNPC):
+    e=Dad()
+    tfont = fload("PrStart")
+    deathtext = "You feel like you'll regret this."
+    def interact(self,world):
+        world.add_talk("Hello, son",self)
+class OverworldEnemy(Object):
+    o3d=4
+    name="NPC"
     def __init__(self,x,y,enemy):
         self.place(x,y)
         self.img=enemy.owimg

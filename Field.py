@@ -2,7 +2,7 @@ import Overworld
 import Enemies
 class OverField(Overworld.World):
     entrances=["FIELDB","FIELDT"]
-    ranencounters=[Enemies.RSlime,Enemies.BadFlower,Enemies.BirdBrain]
+    ranencounters=[Enemies.RSlime,Enemies.BadFlower,Enemies.BirdBrain,Enemies.CoolSlime]
     save="Fields"
     def enter(self,entrance):
         if entrance=="FIELDB":

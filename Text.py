@@ -2,6 +2,7 @@ import Img
 import pygame
 import eztext
 infobox=Img.img2("InfoBox")
+talkbox=Img.img2("TalkBox")
 multibox=Img.img2("MultiBox")
 wabox=Img.img2("AtkBoxWide")
 sabox=Img.img2("AtkBoxSquare")
@@ -15,6 +16,13 @@ class Ibox(Tbox):
     def __init__(self,info):
         self.img=infobox.copy()
         Img.drawTextRect(self.img," "*3+info,(64,64,64),pygame.Rect(10,10,492,108),Img.dfont)
+class TalkBox(Tbox):
+    def __init__(self,info,font,timg):
+        self.img=talkbox.copy()
+        Img.drawTextRect(self.img," "*3+info,(64,64,64),pygame.Rect(10,42,492,108),font)
+        self.img.blit(timg,(16,4))
+    def render(self,screen,iloc):
+        screen.blit(self.img,(iloc[0],iloc[1]-32))
 class EntryBox(Tbox):
     interactive = True
     done=False
