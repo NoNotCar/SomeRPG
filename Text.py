@@ -19,7 +19,7 @@ class Ibox(Tbox):
 class TalkBox(Tbox):
     def __init__(self,info,font,timg):
         self.img=talkbox.copy()
-        Img.drawTextRect(self.img," "*3+info,(64,64,64),pygame.Rect(10,42,492,108),font)
+        Img.drawTextRect(self.img,info,(64,64,64),pygame.Rect(10,62,492,108),font)
         self.img.blit(timg,(16,4))
     def render(self,screen,iloc):
         screen.blit(self.img,(iloc[0],iloc[1]-32))

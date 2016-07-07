@@ -2,12 +2,16 @@ from Img import img2, fload
 from Object import Object
 import Moves
 import pygame
-from random import randint
+from random import randint, choice
 import BoxManagers
 import Weapon
 class Jiggle(Moves.Move):
     def use(self,user,target,battle):
         return user.name.capitalize()+(" wobbles happily!" if user.hap>0 else " jiggles angrily!")
+class CoolTalk(Moves.Move):
+    talks=["Do u want to hang?","Rad cool, bro.","No sweat.","Come watch some internet videos with me, bro."]
+    def use(self,user,target,battle):
+        battle.add_talk(choice(self.talks),user)
 class Spare(Moves.Move):
     def use(self,user,target,battle):
         return user.name.capitalize()+" is sparing you."
@@ -138,7 +142,9 @@ class RSlime(Enemy):
 class CoolSlime(Enemy):
     name="cool slime"
     img=img2("CoolSlime")
-    moves = [NullMove(" is chillin'."),SlimeSpray(),SunSpray()]
+    owimg=img2("CoolSlimeOW")
+    tfont=fload("cool")
+    moves = [NullMove(" is chillin'."),CoolTalk(),SlimeSpray(),SunSpray(),SunSpray()]
     desc = "A RAD COOL slime."
     mhp=15
     hap = 0

@@ -87,6 +87,8 @@ class Battle(object):
         screen.blit(pactions if self.f.hap>0 else bactions,(0,480))
     def add_info(self,info):
         self.infos.append(Text.Ibox(info))
+    def add_talk(self,talk,talker):
+        self.infos.append(Text.TalkBox(talk,talker.tfont,talker.owimg))
     def add_obox(self,box):
         self.infos.append(box)
     def add_resbox(self,box):

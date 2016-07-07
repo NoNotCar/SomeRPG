@@ -111,6 +111,8 @@ class AngBullet(Bullet):
         self.ay+=self.v*sin(self.a)
         self.x=int(round(self.ax))
         self.y=int(round(self.ay))
+        if self.x<-100 or self.x>200 or self.y<-100 or self.y>200:
+            manager.bullets.remove(self)
         self.set_rect()
 class FallingBullet(Bullet):
     fspeed=1
