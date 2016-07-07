@@ -7,6 +7,7 @@ class World(object):
     entrances=[]
     ranencounters=[]
     backcolour=(0,127,14)
+    music=None
     def __init__(self,arch):
         self.arch=arch
         savfile=open(Img.np("areas/%s.sav" % self.save))
@@ -101,6 +102,7 @@ class World(object):
     def add_talk(self,talk,talker):
         self.infos.append(Text.TalkBox(talk,talker.tfont,talker.img))
     def encounter(self,enemy,bad=False):
+        pygame.mixer_music.stop()
         encounter.play()
         pygame.time.wait(500)
         self.arch.encounter(enemy,bad)
@@ -117,11 +119,17 @@ class World(object):
                 w.spawn(self.p)
                 w.p=self.p
     def enter(self,entrance):
+        self.remusic()
         return (0,0)
     def get_p_look(self):
         return D.offset(self.p.d,self.p)
+    def remusic(self):
+        if self.music:
+            pygame.mixer_music.stop()
+            Img.musplay(self.music)
 class Home(World):
     entrances=["HOME"]
+    music="forbidden"
     def __init__(self,arch):
         self.size=(16,13)
         self.arch=arch
@@ -131,6 +139,7 @@ class Home(World):
         self.oconvert()
         self.p=Player.Player(8,7)
         self.spawn(self.p)
+        Img.musplay(self.music)
         for x in range(16):
             for y in range(13):
                 if x in (0,15) or y in (0,12):
@@ -149,4 +158,5 @@ class Home(World):
     def get_exit(self):
         self.exit("FIELDB")
     def enter(self,entrance):
+        self.remusic()
         return (7,0)

@@ -34,6 +34,7 @@ class ArchWorld(object):
         del self.wstack[-1]
         self.battling=False
         pygame.mixer_music.stop()
+        self.wstack[-1].remusic()
     def battle_action(self,n):
         self.wstack[-1].battle_action(n)
     def add_info(self,info):
